@@ -1,59 +1,23 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
       colors: {
-        gold: {
-          50: '#fffbeb',
-          100: '#fef3c7',
-          200: '#fde68a',
-          300: '#fcd34d',
-          400: '#fbbf24',
-          500: '#D4AF37',
-          600: '#B8960C',
-          700: '#92750a',
-          800: '#78600c',
-          900: '#64500e',
-        },
-        rose: {
-          blush: '#F4A7B9',
-          deep: '#C2185B',
-        },
-        cream: '#FDF8F0',
-        charcoal: '#1C1C1C',
+        sage:   { 50:'#f4f7f4', 100:'#e8f0e8', 200:'#c8dbc8', 300:'#9abf9a', 400:'#6a9e6a', 500:'#4a7c59', 600:'#3a6147', 700:'#2e4d38', 800:'#243d2c', 900:'#1a2e20' },
+        rose:   { 50:'#fdf4f5', 100:'#fbe8eb', 200:'#f5c8cf', 300:'#eca0ac', 400:'#e07080', 500:'#c94f62', 600:'#a83a4d', 700:'#8a2d3d', 800:'#72242f', 900:'#5e1d27' },
+        ivory:  { 50:'#fefdfb', 100:'#fdf9f3', 200:'#f9f1e4', 300:'#f3e4cc', 400:'#e8d0ac', 500:'#d9b887', 600:'#c49a60', 700:'#a67e45', 800:'#876537', 900:'#6e522d' },
+        stone:  { 50:'#fafaf9', 100:'#f5f5f4', 200:'#e7e5e4', 300:'#d6d3d1', 400:'#a8a29e', 500:'#78716c', 600:'#57534e', 700:'#44403c', 800:'#292524', 900:'#1c1917' },
       },
       fontFamily: {
-        serif: ['Cormorant Garamond', 'Georgia', 'serif'],
-        display: ['Playfair Display', 'Georgia', 'serif'],
-        sans: ['DM Sans', 'system-ui', 'sans-serif'],
-      },
-      animation: {
-        'fade-up': 'fadeUp 0.6s ease-out forwards',
-        'fade-in': 'fadeIn 0.8s ease-out forwards',
-        'float': 'float 3s ease-in-out infinite',
-      },
-      keyframes: {
-        fadeUp: {
-          '0%': { opacity: '0', transform: 'translateY(30px)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' },
-        },
-        fadeIn: {
-          '0%': { opacity: '0' },
-          '100%': { opacity: '1' },
-        },
-        float: {
-          '0%, 100%': { transform: 'translateY(0)' },
-          '50%': { transform: 'translateY(-10px)' },
-        }
+        display: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+        heading: ['"DM Serif Display"', 'Georgia', 'serif'],
+        body:    ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+        accent:  ['"Libre Baskerville"', 'Georgia', 'serif'],
       },
       backgroundImage: {
-        'gold-gradient': 'linear-gradient(135deg, #D4AF37 0%, #F4E4A1 50%, #B8960C 100%)',
-        'hero-pattern': "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23D4AF37' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
-      }
+        'sage-mesh': 'radial-gradient(at 20% 30%, #c8dbc8 0px, transparent 50%), radial-gradient(at 80% 70%, #f9f1e4 0px, transparent 50%), radial-gradient(at 50% 50%, #fdf4f5 0px, transparent 60%)',
+      },
     },
   },
   plugins: [],

@@ -1,138 +1,177 @@
-import { useState, useEffect } from 'react';
-import { Link, useLocation } from '@tanstack/react-router';
-import { Menu, X, Heart, User, LogOut } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
+import { useState, useEffect } from 'react'
+import { Link, useRouterState } from '@tanstack/react-router'
+import { useAuth } from '../../context/AuthContext'
+
+// SVG icons
+const Logo = () => (
+  <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+    <rect width="32" height="32" rx="10" fill="#4a7c59"/>
+    <path d="M16 7C16 7 9 12 9 18.5C9 22.1 12.1 25 16 25C19.9 25 23 22.1 23 18.5C23 12 16 7 16 7Z" fill="white" fillOpacity="0.3"/>
+    <path d="M16 10L14.5 15H10L13.5 17.5L12 22L16 19.5L20 22L18.5 17.5L22 15H17.5L16 10Z" fill="white"/>
+  </svg>
+)
 
 export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const { user, logout, isLoggedIn } = useAuth();
+  const [scrolled, setScrolled]   = useState(false)
+  const [menuOpen, setMenuOpen]   = useState(false)
+  const { user, logout, isLoggedIn } = useAuth()
+  const router   = useRouterState()
+  const pathname = router.location.pathname
+  const onHome   = pathname === '/'
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    const fn = () => setScrolled(window.scrollY > 50)
+    window.addEventListener('scroll', fn, { passive: true })
+    return () => window.removeEventListener('scroll', fn)
+  }, [])
 
-  const navLinks = [
-    { to: '/', label: 'Home' },
-    { to: '/vendors', label: 'Find Vendors' },
-    { to: '/contact', label: 'Contact' },
-  ];
+  const links = [
+    { to: '/',         label: 'Home'        },
+    { to: '/services', label: 'Services'    },
+    { to: '/vendors',  label: 'Vendors'     },
+    { to: '/contact',  label: 'Contact'     },
+  ]
+
+  const floating = onHome && !scrolled
+  const navBg    = floating
+    ? 'transparent'
+    : 'rgba(254,253,251,0.95)'
+  const textBase = floating ? '#fff' : '#292524'
+  const subText  = floating ? 'rgba(255,255,255,0.7)' : '#78716c'
 
   return (
-    <nav className={`fixed top-0 w-full z-50 transition-all duration-500 ${
-      scrolled
-        ? 'bg-white/95 bg-blur shadow-sm py-3'
-        : 'bg-transparent py-5'
-    }`}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8">
-              <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M16 4C16 4 6 10 6 18C6 23.5228 10.4772 28 16 28C21.5228 28 26 23.5228 26 18C26 10 16 4 16 4Z" fill="#D4AF37" fillOpacity="0.3" stroke="#D4AF37" strokeWidth="1.5"/>
-                <path d="M16 10L14 16H10L13.5 19L12 25L16 21.5L20 25L18.5 19L22 16H18L16 10Z" fill="#D4AF37"/>
-              </svg>
-            </div>
+    <>
+      <header style={{
+        position:'fixed', top:0, left:0, right:0, zIndex:60,
+        background: navBg,
+        backdropFilter: floating ? 'none' : 'blur(16px)',
+        borderBottom: floating ? 'none' : '1px solid rgba(0,0,0,0.06)',
+        boxShadow: floating ? 'none' : '0 2px 20px rgba(0,0,0,0.05)',
+        transition: 'all 0.4s ease',
+      }}>
+        <div style={{ maxWidth:1280, margin:'0 auto', padding: floating ? '18px 32px' : '12px 32px', display:'flex', alignItems:'center', justifyContent:'space-between', transition:'padding 0.3s ease' }}>
+
+          {/* ── Brand ── */}
+          <Link to="/" style={{ display:'flex', alignItems:'center', gap:10, textDecoration:'none' }}>
+            <Logo />
             <div>
-              <span className={`font-display text-xl font-bold tracking-wide transition-colors duration-300 ${
-                scrolled ? 'text-charcoal' : 'text-white'
-              }`}>Eternal Vows</span>
-              <div className="w-full h-px bg-gold-500 mt-0.5"></div>
+              <div style={{ fontFamily:"'DM Serif Display',serif", fontSize:18, color: textBase, letterSpacing:'0.01em', lineHeight:1.1, transition:'color 0.3s' }}>
+                Vivah Studio
+              </div>
+              <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:10, color: subText, letterSpacing:'0.12em', textTransform:'uppercase', transition:'color 0.3s' }}>
+                Wedding Services
+              </div>
             </div>
           </Link>
 
-          {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-8">
-            {navLinks.map(({ to, label }) => (
-              <Link
-                key={to}
-                to={to}
-                className={`font-sans font-medium text-sm tracking-wide transition-colors duration-200 hover:text-gold-500 ${
-                  scrolled ? 'text-charcoal' : 'text-white/90'
-                }`}
-              >
-                {label}
-              </Link>
-            ))}
-          </div>
+          {/* ── Center pill nav (desktop) ── */}
+          <nav style={{ display:'flex', alignItems:'center', gap:2, background: floating ? 'rgba(255,255,255,0.12)' : 'rgba(74,124,89,0.07)', borderRadius:50, padding:'4px', backdropFilter: floating ? 'blur(8px)' : 'none', border: floating ? '1px solid rgba(255,255,255,0.18)' : '1px solid rgba(74,124,89,0.12)' }} className="nav-desktop">
+            {links.map(({ to, label }) => {
+              const active = pathname === to
+              return (
+                <Link key={to} to={to} style={{
+                  fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight: active ? 600 : 400,
+                  fontSize:13, padding:'8px 18px', borderRadius:50,
+                  textDecoration:'none', letterSpacing:'0.02em',
+                  background: active ? (floating ? 'white' : '#4a7c59') : 'transparent',
+                  color: active ? (floating ? '#2e4d38' : 'white') : (floating ? 'rgba(255,255,255,0.85)' : '#44403c'),
+                  transition:'all 0.25s ease',
+                }}
+                onMouseEnter={e => { if (!active) { e.currentTarget.style.background = floating ? 'rgba(255,255,255,0.15)' : 'rgba(74,124,89,0.12)'; e.currentTarget.style.color = floating ? 'white' : '#2e4d38' }}}
+                onMouseLeave={e => { if (!active) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = floating ? 'rgba(255,255,255,0.85)' : '#44403c' }}}
+                >
+                  {label}
+                </Link>
+              )
+            })}
+          </nav>
 
-          {/* Auth Buttons */}
-          <div className="hidden md:flex items-center gap-3">
+          {/* ── Right actions ── */}
+          <div style={{ display:'flex', alignItems:'center', gap:8 }} className="nav-desktop">
+            <Link to="/contact" style={{
+              fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:500, fontSize:13,
+              color: floating ? 'rgba(255,255,255,0.85)' : '#4a7c59',
+              padding:'8px 16px', borderRadius:50, textDecoration:'none',
+              border: `1px solid ${floating ? 'rgba(255,255,255,0.3)' : 'rgba(74,124,89,0.4)'}`,
+              display:'inline-flex', alignItems:'center', gap:6,
+              transition:'all 0.25s ease',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.background = floating ? 'rgba(255,255,255,0.1)' : 'rgba(74,124,89,0.08)' }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 01.06 2.86 2 2 0 012.03 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
+              </svg>
+              Enquire
+            </Link>
+
             {isLoggedIn ? (
-              <div className="flex items-center gap-2">
-                <Link to="/dashboard" className="flex items-center gap-2 font-sans text-sm font-medium text-gold-600 hover:text-gold-700 transition-colors">
-                  <User size={16} />
+              <div style={{ display:'flex', alignItems:'center', gap:4 }}>
+                <Link to="/dashboard" style={{
+                  fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:500, fontSize:13,
+                  color: floating ? 'white' : '#292524', textDecoration:'none',
+                  padding:'8px 14px', borderRadius:50,
+                  display:'inline-flex', alignItems:'center', gap:6,
+                }}>
+                  <div style={{ width:28, height:28, borderRadius:'50%', background:'linear-gradient(135deg,#6a9e6a,#3a6147)', display:'flex', alignItems:'center', justifyContent:'center', fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:600, fontSize:11, color:'white' }}>
+                    {user?.name?.charAt(0)?.toUpperCase()}
+                  </div>
                   {user?.name?.split(' ')[0]}
                 </Link>
-                <button
-                  onClick={logout}
-                  className="flex items-center gap-1 btn-ghost text-red-400 hover:text-red-500 text-sm px-3 py-1"
-                >
-                  <LogOut size={14} />
-                  Logout
+                <button onClick={logout} style={{ background:'none', border:'none', cursor:'pointer', color:'#c94f62', padding:'8px', borderRadius:50, display:'flex', alignItems:'center' }} title="Logout">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
                 </button>
               </div>
             ) : (
-              <>
-                <Link to="/login" className={`font-sans font-medium text-sm transition-colors hover:text-gold-500 ${scrolled ? 'text-charcoal' : 'text-white'}`}>
-                  Login
-                </Link>
-                <Link to="/signup" className="btn-primary text-sm py-2 px-5">
-                  Get Started
-                </Link>
-              </>
+              <Link to="/login" style={{
+                fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:600, fontSize:13,
+                background: floating ? 'white' : '#4a7c59',
+                color: floating ? '#2e4d38' : 'white',
+                padding:'9px 22px', borderRadius:50, textDecoration:'none',
+                letterSpacing:'0.02em', transition:'all 0.25s ease',
+                boxShadow: floating ? 'none' : '0 4px 12px rgba(74,124,89,0.3)',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = floating ? '0 4px 12px rgba(255,255,255,0.2)' : '0 8px 18px rgba(74,124,89,0.4)' }}
+              onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = floating ? 'none' : '0 4px 12px rgba(74,124,89,0.3)' }}
+              >
+                Sign In
+              </Link>
             )}
           </div>
 
-          {/* Mobile Toggle */}
-          <button
-            className={`md:hidden transition-colors ${scrolled ? 'text-charcoal' : 'text-white'}`}
-            onClick={() => setIsOpen(!isOpen)}
-          >
-            {isOpen ? <X size={24} /> : <Menu size={24} />}
+          {/* Mobile burger */}
+          <button onClick={() => setMenuOpen(!menuOpen)} style={{ display:'none', background:'none', border:'none', cursor:'pointer', color: floating ? 'white' : '#292524', padding:8 }} className="nav-mobile" aria-label="Menu">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+              {menuOpen ? <><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></> : <><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></>}
+            </svg>
           </button>
         </div>
-      </div>
 
-      {/* Mobile Menu */}
-      {isOpen && (
-        <div className="md:hidden bg-white border-t border-gray-100 shadow-lg">
-          <div className="px-4 py-4 space-y-3">
-            {navLinks.map(({ to, label }) => (
-              <Link
-                key={to}
-                to={to}
-                className="block font-sans text-charcoal hover:text-gold-500 py-2 border-b border-gray-50"
-                onClick={() => setIsOpen(false)}
-              >
-                {label}
-              </Link>
-            ))}
-            {isLoggedIn ? (
-              <div className="pt-2 space-y-2">
-                <Link to="/dashboard" className="block text-gold-600 font-medium py-2" onClick={() => setIsOpen(false)}>
-                  Dashboard
-                </Link>
-                <button onClick={() => { logout(); setIsOpen(false); }} className="text-red-400 font-medium py-2">
-                  Logout
-                </button>
-              </div>
-            ) : (
-              <div className="pt-2 flex gap-3">
-                <Link to="/login" className="btn-secondary text-sm flex-1 text-center" onClick={() => setIsOpen(false)}>
-                  Login
-                </Link>
-                <Link to="/signup" className="btn-primary text-sm flex-1 text-center" onClick={() => setIsOpen(false)}>
-                  Sign Up
-                </Link>
-              </div>
-            )}
-          </div>
+        {/* Mobile menu */}
+        <div style={{ display: menuOpen ? 'block' : 'none', background:'#fefdfb', borderTop:'1px solid #f0ede8', padding:'16px 24px 24px' }}>
+          {links.map(({ to, label }) => (
+            <Link key={to} to={to} style={{ display:'block', fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:500, fontSize:14, color: pathname===to ? '#4a7c59' : '#44403c', padding:'12px 0', borderBottom:'1px solid #f5f5f4', textDecoration:'none' }} onClick={() => setMenuOpen(false)}>
+              {label}
+            </Link>
+          ))}
+          <Link to="/contact" style={{ display:'block', fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:500, fontSize:14, color:'#4a7c59', padding:'12px 0', textDecoration:'none' }} onClick={() => setMenuOpen(false)}>
+            Enquire Now
+          </Link>
+          {!isLoggedIn && (
+            <div style={{ display:'flex', gap:10, marginTop:16 }}>
+              <Link to="/login" style={{ flex:1, textAlign:'center', padding:'11px', borderRadius:12, border:'1.5px solid #9abf9a', color:'#4a7c59', fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:13, fontWeight:500, textDecoration:'none' }} onClick={() => setMenuOpen(false)}>Login</Link>
+              <Link to="/signup" style={{ flex:1, textAlign:'center', padding:'11px', borderRadius:12, background:'#4a7c59', color:'white', fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:13, fontWeight:600, textDecoration:'none' }} onClick={() => setMenuOpen(false)}>Get Started</Link>
+            </div>
+          )}
         </div>
-      )}
-    </nav>
-  );
+      </header>
+
+      <style>{`
+        @media (max-width:768px) {
+          .nav-desktop { display:none !important; }
+          .nav-mobile  { display:flex !important; }
+        }
+      `}</style>
+    </>
+  )
 }

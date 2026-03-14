@@ -1,103 +1,134 @@
-import { motion } from 'framer-motion';
-import { Link } from '@tanstack/react-router';
-import { ChevronDown, Sparkles } from 'lucide-react';
+import { useEffect, useState } from 'react'
+import { Link } from '@tanstack/react-router'
+
+// Unsplash wedding images for mosaic
+const mosaicImages = [
+  'https://images.unsplash.com/photo-1606800052052-a08af7148866?w=400&q=80',
+  'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=400&q=80',
+  'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=400&q=80',
+  'https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=400&q=80',
+]
+
+const words = ['Moments', 'Stories', 'Memories', 'Beginnings']
 
 export default function Hero() {
+  const [wordIdx, setWordIdx] = useState(0)
+  const [fading, setFading] = useState(false)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setFading(true)
+      setTimeout(() => { setWordIdx(i => (i + 1) % words.length); setFading(false) }, 400)
+    }, 2800)
+    return () => clearInterval(interval)
+  }, [])
+
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background - using gradient since we don't have real images */}
-      <div className="absolute inset-0 bg-gradient-to-br from-charcoal via-gray-900 to-gray-800">
-        <div className="absolute inset-0 bg-hero-pattern opacity-30"></div>
-        {/* Golden ambient glow */}
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-96 h-96 bg-gold-500 rounded-full filter blur-3xl opacity-10 animate-float"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-rose-blush rounded-full filter blur-3xl opacity-8"></div>
-      </div>
+    <section style={{ minHeight:'100vh', display:'grid', gridTemplateColumns:'1fr 1fr', background:'#1a2e20', position:'relative', overflow:'hidden' }}>
 
-      {/* Content */}
-      <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="flex items-center justify-center gap-2 mb-6"
-        >
-          <div className="w-12 h-px bg-gold-500"></div>
-          <Sparkles size={16} className="text-gold-400" />
-          <span className="font-serif text-gold-400 text-sm italic tracking-widest">Your Dream Wedding Awaits</span>
-          <Sparkles size={16} className="text-gold-400" />
-          <div className="w-12 h-px bg-gold-500"></div>
-        </motion.div>
+      {/* ── LEFT: Text content ── */}
+      <div style={{ display:'flex', flexDirection:'column', justifyContent:'center', padding:'120px 48px 80px 64px', position:'relative', zIndex:2 }}>
 
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-white leading-tight mb-6"
-        >
-          Where Love
-          <br />
-          <span className="text-gradient">Begins Forever</span>
-        </motion.h1>
+        {/* Eyebrow */}
+        <div style={{ display:'inline-flex', alignItems:'center', gap:8, marginBottom:32, alignSelf:'flex-start' }}>
+          <div style={{ width:28, height:1, background:'#9abf9a' }} />
+          <span style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:500, fontSize:11, letterSpacing:'0.22em', color:'#9abf9a', textTransform:'uppercase' }}>
+            India's Curated Wedding Platform
+          </span>
+        </div>
 
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="font-serif text-gray-300 text-lg md:text-xl italic mb-10 max-w-2xl mx-auto leading-relaxed"
-        >
-          Discover India's finest wedding vendors — from master photographers to 
-          breathtaking venues. Create memories that last a lifetime.
-        </motion.p>
+        {/* Headline */}
+        <h1 style={{ fontFamily:"'DM Serif Display',serif", fontWeight:400, lineHeight:1.05, margin:'0 0 8px', color:'white' }}>
+          <span style={{ display:'block', fontSize:'clamp(2.4rem,4.5vw,4rem)', opacity:0.7, fontStyle:'italic' }}>
+            Crafting
+          </span>
+          <span style={{ display:'block', fontSize:'clamp(3rem,5.5vw,5rem)', color:'#c8dbc8', transition:'opacity 0.4s ease', opacity: fading ? 0 : 1 }}>
+            {words[wordIdx]}
+          </span>
+          <span style={{ display:'block', fontSize:'clamp(2.4rem,4.5vw,4rem)', opacity:0.7, fontStyle:'italic' }}>
+            That Last Forever
+          </span>
+        </h1>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-          className="flex flex-col sm:flex-row gap-4 justify-center"
-        >
-          <Link to="/vendors" className="btn-primary text-base px-10 py-4 font-sans">
-            Find Your Vendors
+        {/* Divider */}
+        <div style={{ width:48, height:1, background:'linear-gradient(90deg,#9abf9a,transparent)', margin:'28px 0' }} />
+
+        {/* Description */}
+        <p style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", color:'rgba(200,219,200,0.7)', fontSize:15, lineHeight:1.8, maxWidth:420, margin:'0 0 40px' }}>
+          Discover verified photographers, venues, caterers and every wedding service you need — all in one beautifully curated place.
+        </p>
+
+        {/* CTAs */}
+        <div style={{ display:'flex', flexWrap:'wrap', gap:12 }}>
+          <Link to="/vendors" style={{
+            fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:600, fontSize:14,
+            background:'#9abf9a', color:'#1a2e20',
+            padding:'14px 36px', borderRadius:50, textDecoration:'none',
+            letterSpacing:'0.03em', display:'inline-flex', alignItems:'center', gap:8,
+            transition:'all 0.3s ease',
+          }}
+          onMouseEnter={e=>{e.currentTarget.style.background='#c8dbc8';e.currentTarget.style.transform='translateY(-2px)'}}
+          onMouseLeave={e=>{e.currentTarget.style.background='#9abf9a';e.currentTarget.style.transform='none'}}
+          >
+            Browse Vendors
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="#1a2e20" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
           </Link>
-          <Link to="/contact" className="btn-secondary text-base px-10 py-4 font-sans border-white text-white hover:bg-white hover:text-charcoal">
-            Plan My Wedding
+          <Link to="/services" style={{
+            fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:500, fontSize:14,
+            color:'rgba(200,219,200,0.8)',
+            padding:'14px 32px', borderRadius:50, textDecoration:'none',
+            letterSpacing:'0.03em', border:'1px solid rgba(154,191,154,0.3)',
+            transition:'all 0.3s ease', display:'inline-flex', alignItems:'center', gap:8,
+          }}
+          onMouseEnter={e=>{e.currentTarget.style.borderColor='rgba(154,191,154,0.7)';e.currentTarget.style.color='#c8dbc8'}}
+          onMouseLeave={e=>{e.currentTarget.style.borderColor='rgba(154,191,154,0.3)';e.currentTarget.style.color='rgba(200,219,200,0.8)'}}
+          >
+            Our Services
           </Link>
-        </motion.div>
+        </div>
 
-        {/* Stats row */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 1 }}
-          className="mt-16 grid grid-cols-3 gap-8 max-w-lg mx-auto"
-        >
-          {[
-            { num: '500+', label: 'Happy Couples' },
-            { num: '200+', label: 'Verified Vendors' },
-            { num: '50+', label: 'Cities Covered' },
-          ].map(({ num, label }) => (
-            <div key={label} className="text-center">
-              <div className="font-display text-2xl md:text-3xl text-gold-400 font-bold">{num}</div>
-              <div className="font-sans text-xs text-gray-400 mt-1">{label}</div>
+        {/* Bottom stats strip */}
+        <div style={{ display:'flex', gap:32, marginTop:56, paddingTop:32, borderTop:'1px solid rgba(154,191,154,0.15)' }}>
+          {[['500+','Weddings'],['8+','Years'],['200+','Vendors'],['98%','Satisfaction']].map(([n,l])=>(
+            <div key={l}>
+              <div style={{ fontFamily:"'DM Serif Display',serif", fontSize:'clamp(1.3rem,2.5vw,1.8rem)', color:'#c8dbc8' }}>{n}</div>
+              <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:11, color:'rgba(200,219,200,0.5)', letterSpacing:'0.08em', textTransform:'uppercase', marginTop:2 }}>{l}</div>
             </div>
           ))}
-        </motion.div>
+        </div>
       </div>
 
-      {/* Scroll indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.5 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/50"
-      >
-        <span className="font-sans text-xs tracking-widest">SCROLL</span>
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ repeat: Infinity, duration: 1.5 }}
-        >
-          <ChevronDown size={18} />
-        </motion.div>
-      </motion.div>
+      {/* ── RIGHT: Image mosaic ── */}
+      <div style={{ position:'relative', overflow:'hidden' }}>
+        {/* Green tint overlay */}
+        <div style={{ position:'absolute', inset:0, background:'linear-gradient(135deg,#1a2e20 0%,transparent 40%)', zIndex:2, pointerEvents:'none' }} />
+
+        {/* Mosaic grid */}
+        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gridTemplateRows:'1fr 1fr', height:'100%', gap:3 }}>
+          {mosaicImages.map((src, i) => (
+            <div key={i} style={{ overflow:'hidden', position:'relative' }}>
+              <img src={src} alt="" style={{ width:'100%', height:'100%', objectFit:'cover', filter:'saturate(0.7) brightness(0.75)', transition:'transform 8s ease', animation:`zoomSlow ${8+i*2}s ease-in-out infinite alternate` }} onError={e=>{e.target.style.background='#243d2c'}} />
+            </div>
+          ))}
+        </div>
+
+        {/* Floating badge */}
+        <div style={{ position:'absolute', bottom:40, left:40, zIndex:3, background:'rgba(254,253,251,0.95)', borderRadius:16, padding:'16px 20px', backdropFilter:'blur(12px)', boxShadow:'0 8px 32px rgba(0,0,0,0.2)' }}>
+          <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:500, fontSize:11, color:'#78716c', letterSpacing:'0.08em', textTransform:'uppercase', marginBottom:4 }}>Next Available</div>
+          <div style={{ fontFamily:"'DM Serif Display',serif", fontSize:18, color:'#292524' }}>Book Your Date</div>
+          <Link to="/contact" style={{ display:'inline-flex', alignItems:'center', gap:4, fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:600, fontSize:12, color:'#4a7c59', textDecoration:'none', marginTop:8 }}>
+            Enquire Now →
+          </Link>
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes zoomSlow { from{transform:scale(1)} to{transform:scale(1.08)} }
+        @media (max-width:768px) {
+          section { grid-template-columns:1fr !important; }
+          section > div:last-child { height:320px; }
+        }
+      `}</style>
     </section>
-  );
+  )
 }
