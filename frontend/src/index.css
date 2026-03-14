@@ -1,0 +1,89 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background-color: #FDFBF7;
+    color: #1C1C1C;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', Georgia, serif;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-gold-500 hover:bg-gold-600 text-white font-sans font-medium px-6 py-3 rounded-full transition-all duration-300 hover:shadow-lg hover:scale-105 active:scale-95;
+  }
+
+  .btn-secondary {
+    @apply border-2 border-gold-500 text-gold-600 hover:bg-gold-500 hover:text-white font-sans font-medium px-6 py-3 rounded-full transition-all duration-300;
+  }
+
+  .btn-ghost {
+    @apply text-charcoal hover:text-gold-600 font-sans font-medium px-4 py-2 transition-colors duration-200;
+  }
+
+  .card {
+    @apply bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden;
+  }
+
+  .section-title {
+    @apply font-display text-3xl md:text-4xl lg:text-5xl text-charcoal;
+  }
+
+  .section-subtitle {
+    @apply font-serif text-lg text-gray-500 italic;
+  }
+
+  .gold-divider {
+    @apply w-16 h-0.5 bg-gold-500 mx-auto my-4;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 border border-gray-200 rounded-xl font-sans text-sm focus:outline-none focus:ring-2 focus:ring-gold-400 focus:border-transparent transition-all duration-200 bg-white;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    background: linear-gradient(135deg, #D4AF37, #B8960C);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .bg-blur {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .border-gold {
+    border-color: #D4AF37;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f1f1f1; }
+::-webkit-scrollbar-thumb { background: #D4AF37; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #B8960C; }
+
+/* Smooth image loading */
+img { transition: opacity 0.3s ease; }
+img[loading] { opacity: 0; }
+img.loaded { opacity: 1; }
