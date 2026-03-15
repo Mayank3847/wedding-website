@@ -1,163 +1,135 @@
 import { Link } from '@tanstack/react-router'
-import { Star, MapPin, Heart, ExternalLink } from 'lucide-react'
 import { useState } from 'react'
 import { useAuth } from '../../context/AuthContext'
 import { userAPI } from '../../api/auth'
 import toast from 'react-hot-toast'
 
-// Unsplash photo IDs — real wedding/vendor photos (freely usable)
 const CATEGORY_IMAGES = {
-  Photography:    'https://images.unsplash.com/photo-1606800052052-a08af7148866?w=600&q=80',
-  Catering:       'https://images.unsplash.com/photo-1555244162-803834f70033?w=600&q=80',
-  Decoration:     'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=600&q=80',
-  Venue:          'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=600&q=80',
-  'Music & DJ':   'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&q=80',
-  'Bridal Wear':  'https://images.unsplash.com/photo-1596451190630-186aff535bf2?w=600&q=80',
-  'Makeup Artist':'https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=600&q=80',
-  Videography:    'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=600&q=80',
+  Photography:    'https://images.unsplash.com/photo-1606800052052-a08af7148866?w=600&q=75',
+  Catering:       'https://images.unsplash.com/photo-1555244162-803834f70033?w=600&q=75',
+  Decoration:     'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=600&q=75',
+  Venue:          'https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=600&q=75',
+  'Music & DJ':   'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&q=75',
+  'Bridal Wear':  'https://images.unsplash.com/photo-1596451190630-186aff535bf2?w=600&q=75',
+  'Makeup Artist':'https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=600&q=75',
+  Videography:    'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=600&q=75',
 }
 
-const FALLBACK_GRADIENTS = {
-  Photography:    'from-amber-400 to-orange-500',
-  Catering:       'from-emerald-400 to-teal-500',
-  Decoration:     'from-purple-400 to-pink-500',
-  Venue:          'from-blue-400 to-indigo-500',
-  'Music & DJ':   'from-rose-400 to-pink-500',
-  'Bridal Wear':  'from-fuchsia-400 to-purple-500',
-  'Makeup Artist':'from-pink-400 to-rose-500',
-  Videography:    'from-cyan-400 to-blue-500',
+const CATEGORY_COLORS = {
+  Photography: '#D97706', Venue: '#2563EB', Catering: '#059669',
+  Decoration: '#DB2777', 'Music & DJ': '#7C3AED',
+  'Bridal Wear': '#9333EA', 'Makeup Artist': '#E11D48', Videography: '#0891B2',
 }
 
 export default function VendorCard({ vendor }) {
-  const { isLoggedIn } = useAuth()
+  const { isLoggedIn }            = useAuth()
   const [bookmarked, setBookmarked] = useState(false)
-  const [bookmarkLoading, setBookmarkLoading] = useState(false)
-  const [imgError, setImgError] = useState(false)
+  const [imgErr, setImgErr]        = useState(false)
 
   const handleBookmark = async (e) => {
-    e.preventDefault()
-    e.stopPropagation()
-    if (!isLoggedIn) {
-      toast.error('Please login to save vendors')
-      return
-    }
-    setBookmarkLoading(true)
+    e.preventDefault(); e.stopPropagation()
+    if (!isLoggedIn) { toast.error('Please login to save vendors'); return }
     try {
       const res = await userAPI.toggleBookmark(vendor.id)
       setBookmarked(res.data.bookmarked)
       toast.success(res.data.message)
-    } catch {
-      toast.error('Error saving vendor')
-    } finally {
-      setBookmarkLoading(false)
-    }
+    } catch { toast.error('Error saving vendor') }
   }
 
-  const imageUrl = vendor.image_url || CATEGORY_IMAGES[vendor.category_name]
-  const gradient = FALLBACK_GRADIENTS[vendor.category_name] || 'from-gold-400 to-gold-600'
+  const imgSrc   = (!imgErr && (vendor.image_url || CATEGORY_IMAGES[vendor.category_name])) || null
+  const dotColor = CATEGORY_COLORS[vendor.category_name] || '#4a7c59'
 
   return (
-    <Link to={`/vendors/${vendor.id}`} className="card group block">
-
-      {/* ── Image / Banner ── */}
-      <div className="relative h-52 overflow-hidden">
-        {imageUrl && !imgError ? (
-          <>
-            <img
-              src={imageUrl}
-              alt={vendor.name}
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-              onError={() => setImgError(true)}
-            />
-            {/* Dark gradient overlay so text is readable */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
-          </>
+    <Link
+      to={`/vendors/${vendor.id}`}
+      className="card"
+      style={{ textDecoration:'none', display:'flex', flexDirection:'column' }}
+    >
+      {/* Image */}
+      <div style={{ position:'relative', height:'clamp(160px,20vw,210px)', overflow:'hidden', flexShrink:0 }}>
+        {imgSrc ? (
+          <img src={imgSrc} alt={vendor.name} loading="lazy"
+            style={{ width:'100%', height:'100%', objectFit:'cover', transition:'transform 0.6s ease' }}
+            onError={() => setImgErr(true)}
+            onMouseEnter={e => e.target.style.transform='scale(1.05)'}
+            onMouseLeave={e => e.target.style.transform='scale(1)'}
+          />
         ) : (
-          /* Fallback gradient with initial letter */
-          <div className={`w-full h-full bg-gradient-to-br ${gradient} flex items-center justify-center`}>
-            <span className="font-display text-white/25 text-8xl font-bold select-none">
+          <div style={{ width:'100%', height:'100%', background:`linear-gradient(135deg,${dotColor}22,${dotColor}44)`, display:'flex', alignItems:'center', justifyContent:'center' }}>
+            <span style={{ fontFamily:"'DM Serif Display',serif", fontSize:'clamp(3rem,8vw,5rem)', color:`${dotColor}33` }}>
               {vendor.name.charAt(0)}
             </span>
-            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
           </div>
         )}
 
-        {/* ── Badges ── */}
-        <div className="absolute top-3 left-3 flex gap-2 flex-wrap">
+        {/* Gradient overlay */}
+        <div style={{ position:'absolute', inset:0, background:'linear-gradient(to top,rgba(0,0,0,0.4) 0%,transparent 60%)' }} />
+
+        {/* Badges */}
+        <div style={{ position:'absolute', top:'clamp(8px,1.5vw,12px)', left:'clamp(8px,1.5vw,12px)', display:'flex', gap:6, flexWrap:'wrap' }}>
           {vendor.is_featured && (
-            <span
-              className="text-white font-sans text-[11px] font-semibold px-2.5 py-1 rounded-full"
-              style={{ background: 'linear-gradient(135deg, #D4AF37, #B8960C)' }}
-            >
+            <span style={{ background:'#4a7c59', color:'white', fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:600, fontSize:'clamp(9px,1vw,11px)', padding:'3px 10px', borderRadius:999 }}>
               ✦ Featured
             </span>
           )}
           {vendor.category_name && (
-            <span className="bg-white/90 text-charcoal font-sans text-[11px] font-medium px-2.5 py-1 rounded-full">
+            <span style={{ background:'rgba(255,255,255,0.92)', color:'#292524', fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:500, fontSize:'clamp(9px,1vw,11px)', padding:'3px 10px', borderRadius:999 }}>
               {vendor.category_name}
             </span>
           )}
         </div>
 
-        {/* ── Bookmark heart ── */}
+        {/* Bookmark */}
         <button
           onClick={handleBookmark}
-          disabled={bookmarkLoading}
-          className="absolute top-3 right-3 w-9 h-9 bg-white/90 hover:bg-white rounded-full
-                     flex items-center justify-center shadow-sm transition-all duration-200
-                     hover:scale-110 active:scale-95"
-          title={bookmarked ? 'Remove from saved' : 'Save vendor'}
+          aria-label={bookmarked ? 'Remove bookmark' : 'Save vendor'}
+          style={{ position:'absolute', top:'clamp(8px,1.5vw,12px)', right:'clamp(8px,1.5vw,12px)', width:'clamp(32px,4vw,36px)', height:'clamp(32px,4vw,36px)', borderRadius:'50%', background:'rgba(255,255,255,0.92)', border:'none', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', transition:'all 0.2s ease', minWidth:32, minHeight:32 }}
         >
-          <Heart
-            size={15}
-            className={bookmarked ? 'text-red-500' : 'text-gray-500'}
-            style={{ fill: bookmarked ? 'currentColor' : 'none' }}
-          />
+          <svg width="14" height="14" viewBox="0 0 24 24" fill={bookmarked ? '#ef4444' : 'none'} stroke={bookmarked ? '#ef4444' : '#6b7280'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+          </svg>
         </button>
       </div>
 
-      {/* ── Content ── */}
-      <div className="p-5">
-        {/* Name */}
-        <h3
-          className="font-display text-[17px] font-semibold text-charcoal mb-1.5
-                     group-hover:text-gold-600 transition-colors line-clamp-1"
-        >
+      {/* Content */}
+      <div style={{ padding:'clamp(14px,2vw,20px)', display:'flex', flexDirection:'column', gap:'clamp(6px,1vw,10px)', flex:1 }}>
+        <h3 style={{ fontFamily:"'DM Serif Display',serif", fontSize:'clamp(15px,1.8vw,18px)', color:'#1a2e20', fontWeight:400, lineHeight:1.2, margin:0 }}>
           {vendor.name}
         </h3>
 
-        {/* Location */}
-        <div className="flex items-center gap-1.5 mb-3">
-          <MapPin size={12} className="text-gold-400 flex-shrink-0" />
-          <span className="font-sans text-xs text-gray-400 line-clamp-1">{vendor.location}</span>
+        <div style={{ display:'flex', alignItems:'center', gap:5 }}>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#9abf9a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>
+          </svg>
+          <span style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'clamp(11px,1.1vw,12px)', color:'#9abf9a' }}>
+            {vendor.location}
+          </span>
         </div>
 
-        {/* Description */}
-        <p className="font-sans text-xs text-gray-500 line-clamp-2 leading-relaxed mb-4">
+        <p style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'clamp(12px,1.2vw,13px)', color:'#78716c', lineHeight:1.6, margin:0, display:'-webkit-box', WebkitLineClamp:2, WebkitBoxOrient:'vertical', overflow:'hidden' }}>
           {vendor.description}
         </p>
 
-        {/* Rating + Price row */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-1">
-            <Star size={13} className="text-gold-400" style={{ fill: 'currentColor' }} />
-            <span className="font-sans font-semibold text-sm text-charcoal">{vendor.rating}</span>
-            <span className="font-sans text-xs text-gray-400">({vendor.reviews_count})</span>
+        {/* Rating + Price */}
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:4, marginTop:'auto', paddingTop:'clamp(8px,1vw,12px)', borderTop:'1px solid #f4f7f4' }}>
+          <div style={{ display:'flex', alignItems:'center', gap:4 }}>
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="#f59e0b">
+              <path d="M7 1l1.8 3.6L13 5.3l-3 2.9.7 4.1L7 10.1 3.3 12.3l.7-4.1-3-2.9 4.2-.7L7 1z"/>
+            </svg>
+            <span style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:600, fontSize:'clamp(12px,1.2vw,13px)', color:'#292524' }}>{vendor.rating}</span>
+            <span style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize:'clamp(10px,1vw,11px)', color:'#a8a29e' }}>({vendor.reviews_count})</span>
           </div>
-          <span className="font-sans text-xs font-semibold text-gold-600">
+          <span style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:600, fontSize:'clamp(11px,1.1vw,12px)', color:dotColor }}>
             {vendor.price_range}
           </span>
         </div>
 
-        {/* ── Enquire Now button ── */}
-        <div
-          className="w-full text-center py-2.5 rounded-xl font-sans text-sm font-medium
-                     border border-gold-400 text-gold-600 group-hover:bg-gold-500
-                     group-hover:text-white group-hover:border-gold-500
-                     transition-all duration-300 flex items-center justify-center gap-2"
+        {/* Enquire button */}
+        <div style={{ width:'100%', textAlign:'center', padding:'clamp(8px,1.2vw,10px)', borderRadius:'var(--radius-md)', border:`1.5px solid ${dotColor}44`, color:dotColor, fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:600, fontSize:'clamp(11px,1.2vw,13px)', letterSpacing:'0.03em', transition:'all 0.3s ease', display:'flex', alignItems:'center', justifyContent:'center', gap:6 }}
+          onMouseEnter={e=>{e.currentTarget.style.background=dotColor;e.currentTarget.style.color='white';e.currentTarget.style.borderColor=dotColor}}
+          onMouseLeave={e=>{e.currentTarget.style.background='transparent';e.currentTarget.style.color=dotColor;e.currentTarget.style.borderColor=`${dotColor}44`}}
         >
-          <ExternalLink size={13} />
-          Enquire Now
+          Enquire Now →
         </div>
       </div>
     </Link>
