@@ -386,26 +386,7 @@ bookmarks    — id, user_id, vendor_id, created_at (UNIQUE constraint)
 3. Framework: Vite
 4. Add `VITE_API_URL=https://your-render-url.onrender.com/api`
 
----
 
-## 🖼️ Screenshots
-
-### Home Page — Hero Section
-> Full-screen split layout with animated cycling headline, mosaic photo grid and live stats counter
-
-### Vendor Listing
-> Filterable grid of 44+ verified vendors with search, category pills and real Unsplash photos
-
-### Vendor Detail Page
-> Full vendor profile with inquiry form, rating, price range and bookmark functionality
-
-### User Dashboard
-> Protected dashboard showing saved vendors, inquiry history with status tracking
-
-### Services Page
-> Tabbed service detail page with image + feature checklist layout
-
----
 
 ## 👨‍💻 Author
 
