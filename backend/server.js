@@ -1,42 +1,44 @@
 const express = require('express');
-const cors = require('cors');
-const dotenv = require('dotenv');
+const cors    = require('cors');
+const dotenv  = require('dotenv');
 
 dotenv.config();
 
-const authRoutes = require('./routes/authRoutes');
-const vendorRoutes = require('./routes/vendorRoutes');
+const authRoutes    = require('./routes/authRoutes');
+const vendorRoutes  = require('./routes/vendorRoutes');
 const inquiryRoutes = require('./routes/inquiryRoutes');
-const userRoutes = require('./routes/userRoutes');
+const userRoutes    = require('./routes/userRoutes');
 const { errorHandler } = require('./middleware/errorMiddleware');
 
 const app = express();
 
-// ── Allowed Origins ──────────────────────────────────────────
+// ── Allowed Origins ───────────────────────────────────────────
 const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:3000',
   process.env.FRONTEND_URL,
 ].filter(Boolean);
 
-// ── CORS ─────────────────────────────────────────────────────
-app.use(cors({
+// ── CORS config object (reused for preflight + main) ─────────
+const corsOptions = {
   origin: function (origin, callback) {
     // Allow requests with no origin (Postman, mobile apps, curl)
     if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
+    if (allowedOrigins.includes(origin)) return callback(null, true);
     console.warn(`CORS blocked: ${origin}`);
     return callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-}));
+};
 
-// Handle preflight requests for all routes
-app.options('*', cors());
+// ── Apply CORS to all routes ──────────────────────────────────
+app.use(cors(corsOptions));
+
+// ── Handle preflight for all routes  ─────────────────────────
+// FIX: changed '*' → '*splat' to work with path-to-regexp v8+ (Node 22)
+app.options('*splat', cors(corsOptions));
 
 // ── Body Parsers ──────────────────────────────────────────────
 app.use(express.json({ limit: '10mb' }));
@@ -50,7 +52,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// ── Request Logger (only in development) ─────────────────────
+// ── Request Logger (dev only) ─────────────────────────────────
 if (process.env.NODE_ENV !== 'production') {
   app.use((req, res, next) => {
     console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
@@ -68,16 +70,16 @@ app.get('/', (req, res) => {
   });
 });
 
-// Render keep-alive ping route (prevents free tier sleep)
+// ── Keep-alive ping (prevents Render free tier sleep) ─────────
 app.get('/ping', (req, res) => {
   res.json({ pong: true, time: Date.now() });
 });
 
 // ── API Routes ────────────────────────────────────────────────
-app.use('/api/auth',     authRoutes);
-app.use('/api/vendors',  vendorRoutes);
+app.use('/api/auth',      authRoutes);
+app.use('/api/vendors',   vendorRoutes);
 app.use('/api/inquiries', inquiryRoutes);
-app.use('/api/users',    userRoutes);
+app.use('/api/users',     userRoutes);
 
 // ── 404 Handler ───────────────────────────────────────────────
 app.use((req, res) => {

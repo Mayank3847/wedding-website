@@ -3,13 +3,26 @@ import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
 
 export const Route = createRootRoute({
-  component: () => (
-    <div className="min-h-screen flex flex-col">
+  component: RootLayout,
+})
+
+function RootLayout() {
+  return (
+    <div
+      style={{
+        width: '100%',
+        maxWidth: '100%',
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        overflowX: 'hidden',
+      }}
+    >
       <Navbar />
-      <main className="flex-1">
+      <main style={{ flex: 1, width: '100%', maxWidth: '100%' }}>
         <Outlet />
       </main>
       <Footer />
     </div>
-  ),
-})
+  )
+}

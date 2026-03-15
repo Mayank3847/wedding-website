@@ -1,95 +1,117 @@
+import { useEffect, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
+import { Link } from '@tanstack/react-router'
 
 const features = [
   {
     icon: (
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-        <path d="M14 2L17.09 9.26L25 10.27L19.5 15.64L20.9 23.5L14 19.77L7.1 23.5L8.5 15.64L3 10.27L10.91 9.26L14 2Z" fill="#D4AF37"/>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4a7c59" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
       </svg>
     ),
-    title: 'Verified Vendors Only',
-    desc: 'Every vendor on our platform is personally vetted for quality, reliability, and professionalism before listing.',
+    title: 'Smart Discovery',
+    desc: 'Filter vendors by category, city, budget and rating — find exactly who you need in seconds.',
   },
   {
     icon: (
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-        <path d="M14 3C8 3 3 8 3 14s5 11 11 11 11-5 11-11S20 3 14 3z" stroke="#D4AF37" strokeWidth="1.5" fill="none"/>
-        <path d="M14 8v6l4 2" stroke="#D4AF37" strokeWidth="1.5" strokeLinecap="round"/>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4a7c59" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M20 6L9 17l-5-5"/>
       </svg>
     ),
-    title: 'Fast Response Time',
-    desc: 'Get replies from vendors within 2 hours. Our dedicated team ensures you\'re never left waiting for answers.',
+    title: 'Verified Only',
+    desc: 'Every vendor undergoes manual verification before listing. No fake profiles, ever.',
   },
   {
     icon: (
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-        <path d="M5 14l6 6L23 8" stroke="#D4AF37" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4a7c59" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
       </svg>
     ),
-    title: 'Best Price Guarantee',
-    desc: 'Compare quotes from multiple vendors instantly. We ensure you always get the best value for your budget.',
+    title: 'Direct Inquiries',
+    desc: 'Send inquiries directly from vendor pages. No middlemen. No extra charges.',
   },
   {
     icon: (
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-        <path d="M14 4C9 4 5 8 5 13c0 3.9 2.4 7.3 5.9 8.7L14 24l3.1-2.3C20.6 20.3 23 16.9 23 13c0-5-4-9-9-9z" stroke="#D4AF37" strokeWidth="1.5" fill="none"/>
-        <path d="M11 13l2 2 4-4" stroke="#D4AF37" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4a7c59" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>
       </svg>
     ),
-    title: 'Dedicated Support',
-    desc: 'A personal wedding coordinator is assigned to guide you through every step of your planning journey.',
+    title: 'Your Dashboard',
+    desc: 'Track all your vendor conversations, saved vendors and responses in one clean place.',
   },
 ]
 
 export default function WhyUs() {
-  const { ref, inView } = useInView({ threshold: 0.1, triggerOnce: true })
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+  const { ref, inView } = useInView({ threshold: 0.05, triggerOnce: true })
+
+  useEffect(() => {
+    const fn = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', fn)
+    return () => window.removeEventListener('resize', fn)
+  }, [])
 
   return (
-    <section ref={ref} style={{ padding:'100px 0', background:'white', position:'relative', overflow:'hidden' }}>
-      {/* Subtle background text */}
-      <div style={{ position:'absolute', top:'50%', left:'50%', transform:'translate(-50%,-50%)', fontFamily:"'Playfair Display',serif", fontSize:'clamp(6rem,12vw,14rem)', color:'rgba(212,175,55,0.03)', fontWeight:700, whiteSpace:'nowrap', pointerEvents:'none', userSelect:'none', lineHeight:1 }}>
-        ETERNAL VOWS
-      </div>
+    <section ref={ref} style={{ padding: isMobile ? '56px 0' : '96px 0', background: '#f4f7f4' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: isMobile ? '0 20px' : '0 48px' }}>
 
-      <div style={{ maxWidth:1200, margin:'0 auto', padding:'0 1.5rem', position:'relative', zIndex:1 }}>
-
-        {/* Header */}
-        <div style={{ textAlign:'center', marginBottom:72 }}>
-          <p style={{ fontFamily:"'Cormorant Garamond',Georgia,serif", fontStyle:'italic', fontSize:18, color:'#B8960C', marginBottom:8 }}>
-            The Eternal Vows Difference
-          </p>
-          <div style={{ width:60, height:2, background:'linear-gradient(90deg,#D4AF37,#B8960C)', borderRadius:2, margin:'0 auto 16px' }} />
-          <h2 style={{ fontFamily:"'Playfair Display',Georgia,serif", fontSize:'clamp(1.8rem,4vw,3rem)', color:'#1C1C1C', fontWeight:400, margin:0, lineHeight:1.2 }}>
-            Why Couples Choose Us
+        {/* ── Section header — always centered ── */}
+        <div style={{ textAlign:'center', marginBottom: isMobile ? 32 : 52 }}>
+          <span style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:500, fontSize: isMobile ? 10 : 11, letterSpacing:'0.2em', textTransform:'uppercase', color:'#4a7c59', display:'block', marginBottom:10 }}>
+            Why Vivah Studio
+          </span>
+          <h2 style={{ fontFamily:"'DM Serif Display',serif", fontSize: isMobile ? '1.7rem' : '2.8rem', color:'#1a2e20', fontWeight:400, lineHeight:1.15, margin:'0 0 12px' }}>
+            Built for couples,
+            <em style={{ color:'#9abf9a', display:'block' }}>not just vendors</em>
           </h2>
+          <p style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", color:'#78716c', fontSize: isMobile ? 13 : 15, lineHeight:1.75, maxWidth:480, margin:'0 auto 24px' }}>
+            We designed every feature from a couple's perspective — making it easy to discover, compare and connect with the right people for your wedding.
+          </p>
+          <Link to="/vendors" style={{
+            display:'inline-flex', alignItems:'center', gap:8,
+            fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:600,
+            fontSize: isMobile ? 13 : 14,
+            background:'#4a7c59', color:'white',
+            padding: isMobile ? '12px 28px' : '13px 32px',
+            borderRadius:999, textDecoration:'none',
+            letterSpacing:'0.03em', transition:'all 0.3s ease',
+          }}>
+            Start Exploring
+            <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+              <path d="M2 6.5h9M7 2.5l4 4-4 4" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </Link>
         </div>
 
-        {/* 4-col grid */}
-        <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(230px,1fr))', gap:32 }}>
+        {/* ── Feature cards — 1 col mobile, 2 col tablet, 4 col desktop ── */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(4, 1fr)',
+          gap: isMobile ? 12 : 20,
+        }}>
           {features.map(({ icon, title, desc }, i) => (
-            <div
-              key={title}
-              style={{
-                textAlign:'center',
-                opacity: inView ? 1 : 0,
-                transform: inView ? 'translateY(0)' : 'translateY(32px)',
-                transition: `all 0.6s cubic-bezier(0.16,1,0.3,1) ${i * 0.12}s`,
-              }}
-            >
-              {/* Icon ring */}
-              <div style={{ width:72, height:72, borderRadius:'50%', background:'linear-gradient(135deg,#FFFBEB,#FEF3C7)', border:'1px solid rgba(212,175,55,0.3)', display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 20px' }}>
+            <div key={title} style={{
+              background: 'white',
+              borderRadius: isMobile ? 16 : 20,
+              padding: isMobile ? '18px 14px' : '28px 24px',
+              border: '1px solid #e8f0e8',
+              opacity: inView ? 1 : 0,
+              transform: inView ? 'translateY(0)' : 'translateY(20px)',
+              transition: `all 0.5s ease ${i * 0.1}s`,
+            }}>
+              <div style={{ width: isMobile ? 40 : 48, height: isMobile ? 40 : 48, borderRadius: 12, background: '#f4f7f4', display:'flex', alignItems:'center', justifyContent:'center', marginBottom: isMobile ? 12 : 16 }}>
                 {icon}
               </div>
-
-              <h3 style={{ fontFamily:"'Playfair Display',Georgia,serif", fontSize:18, color:'#1C1C1C', fontWeight:600, margin:'0 0 12px' }}>
+              <h3 style={{ fontFamily:"'DM Serif Display',serif", fontSize: isMobile ? 15 : 18, color:'#1a2e20', fontWeight:400, margin:`0 0 ${isMobile ? 8 : 10}px`, lineHeight:1.2 }}>
                 {title}
               </h3>
-              <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize:14, color:'#888', lineHeight:1.7, margin:0 }}>
+              <p style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontSize: isMobile ? 12 : 14, color:'#78716c', lineHeight:1.65, margin:0 }}>
                 {desc}
               </p>
             </div>
           ))}
         </div>
+
       </div>
     </section>
   )
